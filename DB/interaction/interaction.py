@@ -51,10 +51,10 @@ class DbInteraction:
             email=email,
         )
         self.mysql_connection.session.add(user)
-        return True
+        return self.get_user_info(username)
     
     def get_user_info(self, username):
-        user =  self.mysql_connection.session.query(User).filter_by(username=username).first
+        user =  self.mysql_connection.session.query(User).filter_by(username=username).first()
         if user:
             self.mysql_connection.session.expire_all()
             return {"username": user.username, "email": user.email, "password": user.password}
@@ -72,3 +72,4 @@ if __name__ == "__main__":
         db_name="some_db",
         rebuild_db=True
     )
+    db.add_user_info("test", "test", "test")
