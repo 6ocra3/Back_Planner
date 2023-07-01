@@ -1,6 +1,5 @@
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
-
 class MySQLConnection:
     def __init__(self, host, port, user, password, db_name, rebuild_db=False):
         self.host = host
@@ -11,7 +10,7 @@ class MySQLConnection:
         self.rebuild_db = rebuild_db
         self.connection = self.connect()
         session = sessionmaker(
-            dind=self.connection.engine,
+            bind=self.connection.engine,
             autocommit=True,
             autoflush=True,
             enable_baked_queries=False,

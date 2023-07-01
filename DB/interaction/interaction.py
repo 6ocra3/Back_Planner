@@ -1,5 +1,15 @@
-from DB.client.client import MySQLConnection
-from DB.Models.models import Base, User
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+
+from client.client import MySQLConnection
+from Models.models import Base, User
+from exceptions import UserNotFoundException
+
+
+
+
 
 
 class DbInteraction:
@@ -49,4 +59,16 @@ class DbInteraction:
             self.mysql_connection.session.expire_all()
             return {"username": user.username, "email": user.email, "password": user.password}
         else:
-            raise Exception("User not found")
+            raise UserNotFoundException("User not found")
+        
+
+
+if __name__ == "__main__":
+    db = DbInteraction(
+        host="127.0.0.1",
+        port=3306,
+        user="root",
+        password="pass",
+        db_name="some_db",
+        rebuild_db=True
+    )
