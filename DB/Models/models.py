@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, ARRAY
+from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, ARRAY, JSON
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -11,6 +11,15 @@ class Tasks(Base):
     status = Column(SMALLINT,  nullable=False)
     days = Column(ARRAY(Integer, dimensions=1), nullable=False, default=[0,0,0,0,0,0,0])
 
+class TrackerOrder(Base):
+    __tablename__="tracker_order"
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    order = Column(ARRAY(Integer, dimensions=1), nullable=False)
+
+class ListOrder(Base):
+    __tablename__="list_order"
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    order = Column(JSON, nullable = False)
 
 class User(Base):
     __tablename__="users"

@@ -31,6 +31,9 @@ class Server:
     def get_home(self):
         return "Hello world!"
     
+    def add_user_info(self):
+        request_body = dict()
+    
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--config", type=str, dest="config")

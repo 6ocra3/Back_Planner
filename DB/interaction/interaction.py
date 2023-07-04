@@ -41,6 +41,19 @@ class DbInteraction:
         else:
             self.mysql_connection.execute_query("DROP TABLE IF EXISTS tasks")
             Base.metadata.tables["tasks"].create(self.engine)
+    
+    def create_table_list_order(self):
+        if not self.engine.dialect.has_table(self.engine, "list_order"):
+            Base.metadata.tables["list_order"].create(self.engine)
+        else:
+            self.mysql_connection.execute_query("DROP TABLE IF EXISTS list_order")
+            Base.metadata.tables["list_order"].create(self.engine)
+    def create_table_tracker_order(self):
+        if not self.engine.dialect.has_table(self.engine, "tracker_order"):
+            Base.metadata.tables["tracker_order"].create(self.engine)
+        else:
+            self.mysql_connection.execute_query("DROP TABLE IF EXISTS tracker_order")
+            Base.metadata.tables["tracker_order"].create(self.engine)
 
     def create_table_musical_compositions(self):
         if not self.engine.dialect.has_table(self.engine, "musical_compositions"):
