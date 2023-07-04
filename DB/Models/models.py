@@ -1,8 +1,16 @@
-from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT
+from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, ARRAY
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
+
+class Tasks(Base):
+    __tablename__="tasks"
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    task = Column(VARCHAR(50), nullable=False)
+    status = Column(SMALLINT,  nullable=False)
+    days = Column(ARRAY(Integer, dimensions=1), nullable=False, default=[0,0,0,0,0,0,0])
+
 
 class User(Base):
     __tablename__="users"

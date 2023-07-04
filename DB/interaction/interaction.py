@@ -35,6 +35,13 @@ class DbInteraction:
             self.mysql_connection.execute_query("DROP TABLE IF EXISTS users")
             Base.metadata.tables["users"].create(self.engine)
 
+    def create_table_tasks(self):
+        if not self.engine.dialect.has_table(self.engine, "tasks"):
+            Base.metadata.tables["tasks"].create(self.engine)
+        else:
+            self.mysql_connection.execute_query("DROP TABLE IF EXISTS tasks")
+            Base.metadata.tables["tasks"].create(self.engine)
+
     def create_table_musical_compositions(self):
         if not self.engine.dialect.has_table(self.engine, "musical_compositions"):
             Base.metadata.tables["musical_compositions"].create(self.engine)
