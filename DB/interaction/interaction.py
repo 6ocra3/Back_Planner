@@ -78,7 +78,29 @@ class DbInteraction:
         else:
             raise UserNotFoundException("Task not found")
 
+    def edit_task(self, task_id, task_text=None, status=None, days=None):
+        task = self.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()
+        if task:
+            if not(task_text is None) and task.task != task_text:
+                task.task = task_text
+            if not(status is None) and task.status != status:
+                task.status = status
+            if not(days is None) and task.days != days:
+                task.days = days
+            return self.get_task(task_id=task_id)
+        raise UserNotFoundException("Task not found")
+    
 
+    def edit_week(self, date, tr_order=None, l_order=None):
+        week = self.mysql_connection.session.query(Weeks).filter_by(date=date).first()
+        if week:
+            if not(tr_order is None) and week.tracker_order != tr_order:
+                week.tracker_order = tr_order
+            if not(l_order is None) and week.list_order != l_order:
+                week.list_order = l_order
+            return self.get_week(date)
+        else:
+            raise UserNotFoundException("Week not found")
 if __name__ == "__main__":
     db = DbInteraction(
         host="127.0.0.1",
@@ -89,4 +111,6 @@ if __name__ == "__main__":
         rebuild_db=True
     )
     week = db.create_week("2021-08-16")
-    print(db.create_task(task="Hello world!", week_id=week["id"]))
+    task = db.create_task(task="Hello world!", week_id=week["id"])
+    db.edit_task(task_id=task["id"], status=1, days=[1,0,1,0,1,0,1], task_text="Hello Earth!")
+    db.edit_week(date="2021-08-16", tr_order=[1, 0, 2], l_order=[[1, 0], [2], []])
