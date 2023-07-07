@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from client.client import MySQLConnection
-from Models.models import Base, User, Weeks
+from Models.models import Base, User, Weeks, Tasks
 from exceptions import UserNotFoundException
 
 
@@ -51,13 +51,32 @@ class DbInteraction:
         self.mysql_connection.session.add(week)
         return self.get_week(date)
     
+    def create_task(self, task, week_id):
+        self.mysql_connection.session.begin()
+        task = Tasks(
+            task = task,
+            status = 0,
+            week_id = week_id
+        )
+        self.mysql_connection.session.add(task)
+        self.mysql_connection.session.commit()
+        return self.get_task(task.id)
+
     def get_week(self, date):
         week = self.mysql_connection.session.query(Weeks).filter_by(date=date).first()
         if week:
             self.mysql_connection.session.expire_all()
-            return {"date": week.date, "tracker_order": week.tracker_order, "list_order": week.list_order}
+            return {"id": week.id, "date": week.date, "tracker_order": week.tracker_order, "list_order": week.list_order}
         else:
             raise UserNotFoundException("Week not found")
+        
+    def get_task(self, task_id):
+        task = self.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()
+        if task:
+            self.mysql_connection.session.expire_all()
+            return {"id": task.id, "task": task.task, "status": task.status, "days": task.days, "week_id": task.week_id}
+        else:
+            raise UserNotFoundException("Task not found")
 
 
 if __name__ == "__main__":
@@ -69,4 +88,5 @@ if __name__ == "__main__":
         db_name="planner_db",
         rebuild_db=True
     )
-    print(db.create_week("2021-08-16"))
+    week = db.create_week("2021-08-16")
+    print(db.create_task(task="Hello world!", week_id=week["id"]))
