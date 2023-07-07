@@ -101,6 +101,11 @@ class DbInteraction:
             return self.get_week(date)
         else:
             raise UserNotFoundException("Week not found")
+    
+    def filter_task_for_week_id(self, week_id):
+        weeks = self.mysql_connection.session.query(Tasks).filter_by(week_id=week_id).all()
+        return weeks
+
 if __name__ == "__main__":
     db = DbInteraction(
         host="127.0.0.1",

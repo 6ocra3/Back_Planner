@@ -1,4 +1,4 @@
-import requests
+import json
 import threading
 import argparse
 
@@ -23,11 +23,20 @@ class Server:
         db_name=db_name,
         rebuild_db=rebuild_db
     )
+        self.db.create_week("2021-07-07")
+        self.db.create_task(task="Hello world1", week_id=1)
+        self.db.create_task(task="Hello world2", week_id=1)
+        self.db.create_task(task="Hello world3", week_id=1)
 
         self.app = Flask(__name__)
         self.app.add_url_rule("/shutdown", view_func=self.shutdown)
         self.app.add_url_rule("/", view_func=self.get_home)
         self.app.add_url_rule("/home", view_func=self.get_home)
+        self.app.add_url_rule("/create_task", view_func=self.create_task, methods=["POST"] )
+        self.app.add_url_rule("/create_week", view_func=self.create_week, methods=["POST"] )
+        self.app.add_url_rule("/edit_task", view_func=self.edit_task, methods=["PUT"] )
+        self.app.add_url_rule("/week_tasks", view_func=self.get_task_for_week)
+
 
     def run_server(self):
         self.server = threading.Thread(target=self.app.run, kwargs={"host": self.host, "port": self.port})
@@ -45,8 +54,47 @@ class Server:
     def get_home(self):
         return "Hello world!"
     
-    def add_user_info(self):
-        request_body = dict()
+    def create_task(self):
+        request_body = dict(request.json)
+        task = request_body["task"]
+        week_id = request_body["week_id"]
+        self.db.create_task(task=task, week_id=week_id)
+        return f"Succes add {task}", 201
+    
+    def create_week(self):
+        request_body = dict(request.json)
+        date = request_body["date"]
+        self.db.create_week(date=date)
+        return f"Succes add week with date {date}", 201
+    
+    def edit_task(self):
+        request_body = dict(request.json)
+        rkeys = list(request_body.keys())
+        task_text, status, days = None, None, None
+        if "task_id" in rkeys:
+            task_id = request_body["task_id"]
+        if "task_text" in rkeys:
+            task_text = request_body["task_text"]
+        if "status" in rkeys:
+            status = request_body["status"]
+        if "days" in rkeys:
+            days = request_body["days"]
+        res = self.db.edit_task(task_id=task_id, task_text=task_text, status=status, days=days)
+        if res:
+            return f"Succes edit {task_text}", 202
+        
+    def get_task_for_week(self):
+        request_body = dict(request.json)
+        week_id = request_body["week_id"]
+        tasks = self.db.filter_task_for_week_id(week_id=week_id)
+        ans = dict()
+        for i in tasks:
+            temp = { "task":i.task, 
+                     "status":i.status,
+                     "days": i.days}
+            ans[i.id] = temp
+        ans = json.dumps(ans)
+        return ans, 200
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
