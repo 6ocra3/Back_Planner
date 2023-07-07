@@ -91,20 +91,20 @@ class DbInteraction:
         raise UserNotFoundException("Task not found")
     
 
-    def edit_week(self, date, tr_order=None, l_order=None):
+    def edit_week(self, date, tracker_order=None, list_order=None):
         week = self.mysql_connection.session.query(Weeks).filter_by(date=date).first()
         if week:
-            if not(tr_order is None) and week.tracker_order != tr_order:
-                week.tracker_order = tr_order
-            if not(l_order is None) and week.list_order != l_order:
-                week.list_order = l_order
+            if not(tracker_order is None) and week.tracker_order != tracker_order:
+                week.tracker_order = tracker_order
+            if not(list_order is None) and week.list_order != list_order:
+                week.list_order = list_order
             return self.get_week(date)
         else:
             raise UserNotFoundException("Week not found")
     
     def filter_task_for_week_id(self, week_id):
-        weeks = self.mysql_connection.session.query(Tasks).filter_by(week_id=week_id).all()
-        return weeks
+        tasks = self.mysql_connection.session.query(Tasks).filter_by(week_id=week_id).all()
+        return tasks
 
 if __name__ == "__main__":
     db = DbInteraction(

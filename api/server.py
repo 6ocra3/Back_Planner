@@ -35,6 +35,7 @@ class Server:
         self.app.add_url_rule("/create_task", view_func=self.create_task, methods=["POST"] )
         self.app.add_url_rule("/create_week", view_func=self.create_week, methods=["POST"] )
         self.app.add_url_rule("/edit_task", view_func=self.edit_task, methods=["PUT"] )
+        self.app.add_url_rule("/edit_week", view_func=self.edit_week, methods=["PUT"] )
         self.app.add_url_rule("/week_tasks", view_func=self.get_task_for_week)
 
 
@@ -82,6 +83,20 @@ class Server:
         res = self.db.edit_task(task_id=task_id, task_text=task_text, status=status, days=days)
         if res:
             return f"Succes edit {task_text}", 202
+    
+    def edit_week(self):
+        request_body = dict(request.json)
+        rkeys = list(request_body.keys())
+        date = request_body["date"]
+        tracker_order, list_order = None, None
+        if "tracker_order" in rkeys:
+            tracker_order = request_body["tracker_order"]
+        if "list_order" in rkeys:
+            list_order = request_body["list_order"]
+        res = self.db.edit_week(date=date, tracker_order=tracker_order, list_order=list_order)
+        if res:
+            return f"Succes edit week {date}", 202
+    
         
     def get_task_for_week(self):
         request_body = dict(request.json)
@@ -95,6 +110,8 @@ class Server:
             ans[i.id] = temp
         ans = json.dumps(ans)
         return ans, 200
+
+
     
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
