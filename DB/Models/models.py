@@ -1,8 +1,14 @@
-from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, ARRAY, JSON
+from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, ARRAY, JSON, DATE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
 Base = declarative_base()
+
+class Weeks(Base):
+    __tablename__="weeks"
+    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
+    date = Column(DATE, nullable=False)
+
 
 class Tasks(Base):
     __tablename__="tasks"
@@ -10,6 +16,8 @@ class Tasks(Base):
     task = Column(VARCHAR(50), nullable=False)
     status = Column(SMALLINT,  nullable=False)
     days = Column(ARRAY(Integer, dimensions=1), nullable=False, default=[0,0,0,0,0,0,0])
+    week_id = Column(Integer, ForeignKey('weeks.id'))
+
 
 class TrackerOrder(Base):
     __tablename__="tracker_order"
