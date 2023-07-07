@@ -8,6 +8,10 @@ class Weeks(Base):
     __tablename__="weeks"
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     date = Column(DATE, nullable=False)
+    tracker_order = Column(ARRAY(Integer, dimensions=1), nullable=False)
+    list_order = Column(JSON, nullable = False)
+
+
 
 
 class Tasks(Base):
@@ -17,17 +21,6 @@ class Tasks(Base):
     status = Column(SMALLINT,  nullable=False)
     days = Column(ARRAY(Integer, dimensions=1), nullable=False, default=[0,0,0,0,0,0,0])
     week_id = Column(Integer, ForeignKey('weeks.id'))
-
-
-class TrackerOrder(Base):
-    __tablename__="tracker_order"
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    order = Column(ARRAY(Integer, dimensions=1), nullable=False)
-
-class ListOrder(Base):
-    __tablename__="list_order"
-    id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
-    order = Column(JSON, nullable = False)
 
 class User(Base):
     __tablename__="users"
