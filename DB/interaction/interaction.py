@@ -4,7 +4,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from client.client import MySQLConnection
-from Models.models import Base, User
+from Models.models import Base, User, Weeks
 from exceptions import UserNotFoundException
 
 
@@ -24,10 +24,9 @@ class DbInteraction:
         )
         self.engine = self.mysql_connection.connection.engine
 
-        if rebuild_db:
+        if rebuild_db:            
+            self.create_table_weeks()
             self.create_table_tasks()
-            self.create_table_list_order()
-            self.create_table_tracker_order()
 
     def create_table_tasks(self):
         if not self.engine.dialect.has_table(self.engine, "tasks"):
@@ -36,19 +35,29 @@ class DbInteraction:
             self.mysql_connection.execute_query("DROP TABLE IF EXISTS tasks")
             Base.metadata.tables["tasks"].create(self.engine)
     
-    def create_table_list_order(self):
-        if not self.engine.dialect.has_table(self.engine, "list_order"):
-            Base.metadata.tables["list_order"].create(self.engine)
+    def create_table_weeks(self):
+        if not self.engine.dialect.has_table(self.engine, "weeks"):
+            Base.metadata.tables["weeks"].create(self.engine)
         else:
-            self.mysql_connection.execute_query("DROP TABLE IF EXISTS list_order")
-            Base.metadata.tables["list_order"].create(self.engine)
-    def create_table_tracker_order(self):
-        if not self.engine.dialect.has_table(self.engine, "tracker_order"):
-            Base.metadata.tables["tracker_order"].create(self.engine)
+            self.mysql_connection.execute_query("DROP TABLE IF EXISTS weeks")
+            Base.metadata.tables["weeks"].create(self.engine)
+
+    def create_week(self, date):
+        week = Weeks(
+            date = date,
+            tracker_order = [],
+            list_order = []
+        )
+        self.mysql_connection.session.add(week)
+        return self.get_week(date)
+    
+    def get_week(self, date):
+        week = self.mysql_connection.session.query(Weeks).filter_by(date=date).first()
+        if week:
+            self.mysql_connection.session.expire_all()
+            return {"date": week.date, "tracker_order": week.tracker_order, "list_order": week.list_order}
         else:
-            self.mysql_connection.execute_query("DROP TABLE IF EXISTS tracker_order")
-            Base.metadata.tables["tracker_order"].create(self.engine)
-        
+            raise UserNotFoundException("Week not found")
 
 
 if __name__ == "__main__":
@@ -60,3 +69,4 @@ if __name__ == "__main__":
         db_name="planner_db",
         rebuild_db=True
     )
+    print(db.create_week("2021-08-16"))

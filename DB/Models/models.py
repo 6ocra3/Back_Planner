@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, ARRAY, JSON, DATE
+from sqlalchemy import Column, Integer, ForeignKey, VARCHAR, UniqueConstraint, SMALLINT, JSON, DATE
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -8,19 +8,18 @@ class Weeks(Base):
     __tablename__="weeks"
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     date = Column(DATE, nullable=False)
-    tracker_order = Column(ARRAY(Integer, dimensions=1), nullable=False)
+    tracker_order = Column(JSON, nullable=False)
     list_order = Column(JSON, nullable = False)
-
-
-
 
 class Tasks(Base):
     __tablename__="tasks"
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     task = Column(VARCHAR(50), nullable=False)
     status = Column(SMALLINT,  nullable=False)
-    days = Column(ARRAY(Integer, dimensions=1), nullable=False, default=[0,0,0,0,0,0,0])
+    days = Column(JSON, nullable=False, default=[0, 0, 0, 0, 0, 0, 0])
     week_id = Column(Integer, ForeignKey('weeks.id'))
+    week = relationship('Weeks', backref='tasks')
+
 
 class User(Base):
     __tablename__="users"
