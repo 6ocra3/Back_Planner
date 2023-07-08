@@ -38,8 +38,17 @@ class Server:
         self.app.add_url_rule("/create_week", view_func=self.create_week, methods=["POST"] )
         self.app.add_url_rule("/edit_task", view_func=self.edit_task, methods=["PUT"] )
         self.app.add_url_rule("/edit_week", view_func=self.edit_week, methods=["PUT"] )
-        self.app.add_url_rule("/week_tasks/<week_id>", view_func=self.get_task_for_week)
+        self.app.add_url_rule("/get_week_tasks/<date>", view_func=self.get_task_for_week)
+        self.app.add_url_rule("/get_task/<task_id>", view_func=self.get_task)
+        self.app.add_url_rule("/get_week/<date>", view_func=self.get_week)
 
+    def get_task(self, task_id):
+        task = self.db.get_task(task_id=task_id)
+        return task, 200
+
+    def get_week(self, date):
+        week = self.db.get_week(date=date)
+        return week
 
     def run_server(self):
         self.server = threading.Thread(target=self.app.run, kwargs={"host": self.host, "port": self.port})
@@ -100,8 +109,8 @@ class Server:
             return f"Succes edit week {date}", 202
     
         
-    def get_task_for_week(self, week_id):
-        tasks = self.db.filter_task_for_week_id(week_id=week_id)
+    def get_task_for_week(self, date):
+        tasks = self.db.filter_task_for_week_id(date=date)
         ans = dict()
         for i in tasks:
             temp = { "task":i.task, 
