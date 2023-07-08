@@ -25,9 +25,9 @@ class Server:
         rebuild_db=rebuild_db
     )
         self.db.create_week("2022-07-03")
-        self.db.create_task(task="Hello world1", week_id=1)
-        self.db.create_task(task="Hello world2", week_id=1)
-        self.db.create_task(task="Hello world3", week_id=1)
+        self.db.create_task(task="Hello world1", week_id=1, column=1)
+        self.db.create_task(task="Hello world2", week_id=1, column=0)
+        self.db.create_task(task="Hello world3", week_id=1, column=0)
 
         self.app = Flask(__name__)
         CORS(self.app)

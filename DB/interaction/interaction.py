@@ -1,6 +1,6 @@
 import sys
 import os
-
+import copy
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 
 from client.client import MySQLConnection
@@ -46,21 +46,30 @@ class DbInteraction:
         week = Weeks(
             date = date,
             tracker_order = [],
-            list_order = []
+            list_order = [[]]
         )
         self.mysql_connection.session.add(week)
         return self.get_week(date)
     
-    def create_task(self, task, week_id):
+    def create_task(self, task, week_id, column):
         self.mysql_connection.session.begin()
         task = Tasks(
-            task = task,
-            status = 0,
-            week_id = week_id
+            task=task,
+            status=0,
+            week_id=week_id
         )
         self.mysql_connection.session.add(task)
         self.mysql_connection.session.commit()
+        week = self.mysql_connection.session.query(Weeks).filter_by(id=week_id).first()
+        a = copy.deepcopy(week.list_order[:])
+        while column > len(a) - 1:
+            a.append([])
+        a[column].append(task.id)
+        self.edit_week(date=week.date, list_order=a)
+        self.get_week(week.date)
         return self.get_task(task.id)
+
+
 
     def get_week(self, date):
         week = self.mysql_connection.session.query(Weeks).filter_by(date=date).first()
@@ -96,8 +105,8 @@ class DbInteraction:
         if week:
             if not(tracker_order is None) and week.tracker_order != tracker_order:
                 week.tracker_order = tracker_order
-            if not(list_order is None) and week.list_order != list_order:
-                week.list_order = list_order
+            if not(list_order is None):
+                week.list_order = copy.deepcopy(list_order)
             return self.get_week(date)
         else:
             raise UserNotFoundException("Week not found")
