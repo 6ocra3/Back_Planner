@@ -25,9 +25,9 @@ class Server:
         rebuild_db=rebuild_db
     )
         self.db.create_week("2022-07-03")
-        self.db.create_task(task="Hello world1", week_id=1, column=1)
-        self.db.create_task(task="Hello world2", week_id=1, column=0)
-        self.db.create_task(task="Hello world3", week_id=1, column=0)
+        self.db.create_task(task="Hello world1", date="2022-07-03", column=1)
+        self.db.create_task(task="Hello world2", date="2022-07-03", column=0)
+        self.db.create_task(task="Hello world3", date="2022-07-03", column=0)
 
         self.app = Flask(__name__)
         CORS(self.app)
@@ -69,8 +69,9 @@ class Server:
     def create_task(self):
         request_body = dict(request.json)
         task = request_body["task"]
-        week_id = request_body["week_id"]
-        self.db.create_task(task=task, week_id=week_id)
+        date = request_body["date"]
+        column = request_body["column"]
+        self.db.create_task(task=task, date=date, column=column)
         return f"Succes add {task}", 201
     
     def create_week(self):

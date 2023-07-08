@@ -51,16 +51,16 @@ class DbInteraction:
         self.mysql_connection.session.add(week)
         return self.get_week(date)
     
-    def create_task(self, task, week_id, column):
+    def create_task(self, task, date, column):
+        week = self.mysql_connection.session.query(Weeks).filter_by(date=date).first()
         self.mysql_connection.session.begin()
         task = Tasks(
             task=task,
             status=0,
-            week_id=week_id
+            week_id=week.id
         )
         self.mysql_connection.session.add(task)
         self.mysql_connection.session.commit()
-        week = self.mysql_connection.session.query(Weeks).filter_by(id=week_id).first()
         a = copy.deepcopy(week.list_order[:])
         while column > len(a) - 1:
             a.append([])
