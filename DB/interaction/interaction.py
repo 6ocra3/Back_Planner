@@ -23,8 +23,7 @@ class DbInteraction:
             rebuild_db=rebuild_db,
         )
         self.engine = self.mysql_connection.connection.engine
-
-        if rebuild_db:            
+        if rebuild_db:         
             self.create_table_weeks()
             self.create_table_tasks()
 

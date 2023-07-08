@@ -24,10 +24,11 @@ class Server:
         db_name=db_name,
         rebuild_db=rebuild_db
     )
-        self.db.create_week("2022-07-03")
-        self.db.create_task(task="Hello world1", date="2022-07-03", column=1)
-        self.db.create_task(task="Hello world2", date="2022-07-03", column=0)
-        self.db.create_task(task="Hello world3", date="2022-07-03", column=0)
+        if rebuild_db:
+            self.db.create_week("2022-07-03")
+            self.db.create_task(task="Hello world1", date="2022-07-03", column=1)
+            self.db.create_task(task="Hello world2", date="2022-07-03", column=0)
+            self.db.create_task(task="Hello world3", date="2022-07-03", column=0)
 
         self.app = Flask(__name__)
         CORS(self.app)
@@ -137,7 +138,7 @@ if __name__ == "__main__":
     db_user=config["DB_USER"]
     db_password=config["DB_PASSWORD"]
     db_name=config["DB_NAME"]
-    rebuild_db=config["REBUILD_DB"]
-    
+    rebuild_db = config["REBUILD_DB"] == "True"
     server = Server(host=server_host, port=server_port, db_host=db_host, db_port=db_port, db_user=db_user, db_password=db_password, db_name=db_name, rebuild_db=rebuild_db)
+
     server.run_server()
