@@ -8,6 +8,7 @@ import os
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from DB.interaction.interaction import DbInteraction
 from flask import Flask, request
+from flask_cors import CORS
 from utils import config_parser
 
 class Server:
@@ -23,12 +24,13 @@ class Server:
         db_name=db_name,
         rebuild_db=rebuild_db
     )
-        self.db.create_week("2021-07-07")
+        self.db.create_week("2022-07-03")
         self.db.create_task(task="Hello world1", week_id=1)
         self.db.create_task(task="Hello world2", week_id=1)
         self.db.create_task(task="Hello world3", week_id=1)
 
         self.app = Flask(__name__)
+        CORS(self.app)
         self.app.add_url_rule("/shutdown", view_func=self.shutdown)
         self.app.add_url_rule("/", view_func=self.get_home)
         self.app.add_url_rule("/home", view_func=self.get_home)
