@@ -38,7 +38,7 @@ class Server:
         self.app.add_url_rule("/create_week", view_func=self.create_week, methods=["POST"] )
         self.app.add_url_rule("/edit_task", view_func=self.edit_task, methods=["PUT"] )
         self.app.add_url_rule("/edit_week", view_func=self.edit_week, methods=["PUT"] )
-        self.app.add_url_rule("/week_tasks", view_func=self.get_task_for_week)
+        self.app.add_url_rule("/week_tasks/<week_id>", view_func=self.get_task_for_week)
 
 
     def run_server(self):
@@ -100,9 +100,7 @@ class Server:
             return f"Succes edit week {date}", 202
     
         
-    def get_task_for_week(self):
-        request_body = dict(request.json)
-        week_id = request_body["week_id"]
+    def get_task_for_week(self, week_id):
         tasks = self.db.filter_task_for_week_id(week_id=week_id)
         ans = dict()
         for i in tasks:
