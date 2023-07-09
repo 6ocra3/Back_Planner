@@ -94,7 +94,7 @@ class DbInteraction:
             if not(status is None) and task.status != status:
                 task.status = status
             if not(days is None) and task.days != days:
-                task.days = days
+                task.days = days[:]
             return self.get_task(task_id=task_id)
         raise UserNotFoundException("Task not found")
     

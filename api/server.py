@@ -7,6 +7,7 @@ import os
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
 from DB.interaction.interaction import DbInteraction
+from DB.Models.models import Tasks
 from flask import Flask, request
 from flask_cors import CORS
 from utils import config_parser
@@ -43,12 +44,25 @@ class Server:
         self.app.add_url_rule("/get_task/<task_id>", view_func=self.get_task)
         self.app.add_url_rule("/get_week/<date>", view_func=self.get_week)
         self.app.add_url_rule("/edit_task_status", view_func=self.edit_task_status, methods=["PUT"])
+        self.app.add_url_rule("/edit_task_day", view_func=self.edit_task_day, methods=["PUT"])
 
     def edit_task_status(self):
         request_body = dict(request.json)
         task_id = request_body["task_id"]
         status = request_body["status"]
         res = self.db.edit_task(task_id=task_id, status=status)
+        if res:
+            return "Succes", 200
+        
+    def edit_task_day(self):
+        request_body = dict(request.json)
+        task_id = request_body["task_id"]
+        day = request_body["day"]
+        value = request_body["value"]
+        task = self.db.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()
+        new_days = task.days[:]
+        new_days[day] = value
+        res = self.db.edit_task(task_id=task_id, days=new_days)
         if res:
             return "Succes", 200
 
