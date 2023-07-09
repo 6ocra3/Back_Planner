@@ -42,6 +42,15 @@ class Server:
         self.app.add_url_rule("/get_week_tasks/<date>", view_func=self.get_task_for_week)
         self.app.add_url_rule("/get_task/<task_id>", view_func=self.get_task)
         self.app.add_url_rule("/get_week/<date>", view_func=self.get_week)
+        self.app.add_url_rule("/edit_task_status", view_func=self.edit_task_status, methods=["PUT"])
+
+    def edit_task_status(self):
+        request_body = dict(request.json)
+        task_id = request_body["task_id"]
+        status = request_body["status"]
+        res = self.db.edit_task(task_id=task_id, status=status)
+        if res:
+            return "Succes", 200
 
     def get_task(self, task_id):
         task = self.db.get_task(task_id=task_id)

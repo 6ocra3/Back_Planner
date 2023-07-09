@@ -5,4 +5,4 @@ DB_PORT = 3306
 DB_USER =  root
 DB_PASSWORD = pass
 DB_NAME = planner_db
-REBUILD_DB = True
+REBUILD_DB = False
