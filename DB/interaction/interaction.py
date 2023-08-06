@@ -75,8 +75,6 @@ class DbInteraction:
         if week:
             self.mysql_connection.session.expire_all()
             return {"id": week.id, "date": week.date, "tracker_order": week.tracker_order, "list_order": week.list_order}
-        else:
-            raise UserNotFoundException("Week not found")
         
     def get_task(self, task_id):
         task = self.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()

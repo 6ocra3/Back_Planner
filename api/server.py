@@ -135,6 +135,9 @@ class Server:
     
         
     def get_task_for_week(self, date):
+        week = self.db.get_week(date=date)
+        if not(week):
+            self.db.create_week(date=date)
         tasks = self.db.filter_task_for_week_id(date=date)
         ans = dict()
         for i in tasks:
