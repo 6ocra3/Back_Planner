@@ -45,7 +45,7 @@ class DbInteraction:
         week = Weeks(
             date = date,
             tracker_order = [],
-            list_order = [[]]
+            list_order = [[], [], []]
         )
         self.mysql_connection.session.add(week)
         return self.get_week(date)

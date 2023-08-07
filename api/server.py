@@ -95,8 +95,8 @@ class Server:
         task = request_body["task"]
         date = request_body["date"]
         column = request_body["column"]
-        self.db.create_task(task=task, date=date, column=column)
-        return f"Succes add {task}", 201
+        newTask = self.db.create_task(task=task, date=date, column=column)
+        return {"id": newTask["id"]}, 201
     
     def create_week(self):
         request_body = dict(request.json)
