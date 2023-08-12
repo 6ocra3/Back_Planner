@@ -80,11 +80,12 @@ class DbInteraction:
         task = self.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()
         if task:
             self.mysql_connection.session.expire_all()
-            return {"id": task.id, "task": task.task, "status": task.status, "days": task.days, "week_id": task.week_id}
+            return {"id": task.id, "task": task.task, "status": task.status, "days": task.days, "week_id": task.week_id, "description": task.description}
         else:
             raise UserNotFoundException("Task not found")
 
-    def edit_task(self, task_id, task_text=None, status=None, days=None):
+    def edit_task(self, task_id, task_text=None, status=None, days=None, description=None):
+        print(description)
         task = self.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()
         if task:
             if not(task_text is None) and task.task != task_text:
@@ -93,6 +94,8 @@ class DbInteraction:
                 task.status = status
             if not(days is None) and task.days != days:
                 task.days = days[:]
+            if not(description is None) and task.description != description:
+                task.description = description
             return self.get_task(task_id=task_id)
         raise UserNotFoundException("Task not found")
     

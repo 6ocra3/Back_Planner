@@ -107,7 +107,7 @@ class Server:
     def edit_task(self):
         request_body = dict(request.json)
         rkeys = list(request_body.keys())
-        task_text, status, days = None, None, None
+        task_text, status, days, description = None, None, None, None
         if "task_id" in rkeys:
             task_id = request_body["task_id"]
         if "task_text" in rkeys:
@@ -116,9 +116,11 @@ class Server:
             status = request_body["status"]
         if "days" in rkeys:
             days = request_body["days"]
-        res = self.db.edit_task(task_id=task_id, task_text=task_text, status=status, days=days)
+        if "description" in rkeys:
+            description = request_body["description"]
+        res = self.db.edit_task(task_id=task_id, task_text=task_text, status=status, days=days, description=description)
         if res:
-            return f"Succes edit {task_text}", 202
+            return f"Succes edit {task_id}", 202
     
     def edit_week(self):
         request_body = dict(request.json)
