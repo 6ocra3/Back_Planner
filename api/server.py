@@ -145,7 +145,8 @@ class Server:
         for i in tasks:
             temp = { "task":i.task, 
                      "status":i.status,
-                     "days": i.days}
+                     "days": i.days,
+                     "description": i.description}
             ans[i.id] = temp
         ans = json.dumps(ans)
         return ans, 200

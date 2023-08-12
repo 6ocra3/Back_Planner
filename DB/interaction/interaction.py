@@ -85,7 +85,6 @@ class DbInteraction:
             raise UserNotFoundException("Task not found")
 
     def edit_task(self, task_id, task_text=None, status=None, days=None, description=None):
-        print(description)
         task = self.mysql_connection.session.query(Tasks).filter_by(id=task_id).first()
         if task:
             if not(task_text is None) and task.task != task_text:
