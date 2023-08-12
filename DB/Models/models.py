@@ -16,6 +16,7 @@ class Tasks(Base):
     id = Column(Integer, primary_key=True, autoincrement=True, nullable=False)
     task = Column(VARCHAR(50), nullable=False)
     status = Column(SMALLINT,  nullable=False)
+    description = Column(VARCHAR(200), nullable=True)
     days = Column(JSON, nullable=False, default=[0, 0, 0, 0, 0, 0, 0])
     week_id = Column(Integer, ForeignKey('weeks.id'))
     week = relationship('Weeks', backref='tasks')
